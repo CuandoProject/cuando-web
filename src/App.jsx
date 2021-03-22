@@ -7,13 +7,12 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 import {BrowserRouter, Route, NavLink, Switch, Link, useHistory} from "react-router-dom";
 
-import firebase from './firebase'
 import SignInScreen from "./account";
 import CreatePoll from "./createPoll";
 import VotePoll from "./votePoll";
 import ViewPoll from "./viewPoll"
 
-let database =  firebase.database();
+import {Parse, Poll, Event} from "./parse"
 
 const localizer = momentLocalizer(moment)
 
@@ -47,7 +46,6 @@ function App(props) {
                 <Route path="/" render={(props) => <Home history={props.history} match={props.match}/>} />
                 <Route render={() => <h1>404: page not found</h1>} />
             </Switch>
-            <button onClick={() => firebase.auth().signOut()} className="footer">Logout</button>
         </BrowserRouter>
         )
 }
@@ -56,18 +54,18 @@ function Home(props){
 
     let [polls, setPolls] = useState([])
 
-    useEffect(()=> {
-        database.ref('/polls').once('value').then((polls) => {
-            polls = polls.val()
-            let pollsList = []
-            for (const key in polls){
-                pollsList.push({key: key, title: polls[key].title})
-            }
-            setPolls(pollsList)
-        }, (error) => {
-            console.log(error)
-        })
-    }, [])
+    // useEffect(()=> {
+    //     database.ref('/polls').once('value').then((polls) => {
+    //         polls = polls.val()
+    //         let pollsList = []
+    //         for (const key in polls){
+    //             pollsList.push({key: key, title: polls[key].title})
+    //         }
+    //         setPolls(pollsList)
+    //     }, (error) => {
+    //         console.log(error)
+    //     })
+    // }, [])
 
     return(
         <div className='home'>

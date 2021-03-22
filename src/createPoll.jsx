@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
-import firebase from "./firebase";
 import moment from "moment";
 import {Calendar, momentLocalizer} from "react-big-calendar";
 
 import {serializeEvents, serializeNewEvents} from "./utils"
 import {Button, TextField} from "@material-ui/core";
 
-let database =  firebase.database();
 const localizer = momentLocalizer(moment)
+
+import {Parse, Poll, Event} from "./parse"
 
 function slotNotInEvents(eventsList, slotFind){
     for (let ev of eventsList){
@@ -65,19 +65,18 @@ function CreatePoll(props){
     }
 
     function submitPoll () {
-        let pollRef = database.ref('/polls/').push()
-        let pollInfo = {
-            title: title,
-            events: serializeNewEvents(events), //should move events to a different subtree for performance reasons
-            owner: firebase.auth().currentUser.uid
-        }
-        console.log(pollInfo)
-        pollRef.set(pollInfo, (error) => {
-            error && console.log(error)
-        })
 
+        let poll = new Poll(title);
+        poll.save().then(console.log);
+
+        events.map(console.log);
+
+        events.map((ev) => {
+            let event = Event.fromCalendarEvent(ev, poll);
+            event.save().then(console.log);
+        })
         alert("created poll " + title + " with n events: " +events.length);
-        history.push('/');
+        // history.push('/');
 
     }
 
