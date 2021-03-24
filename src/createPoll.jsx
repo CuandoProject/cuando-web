@@ -8,7 +8,7 @@ import {Button, TextField} from "@material-ui/core";
 
 const localizer = momentLocalizer(moment)
 
-import {Parse, Poll, Event} from "./parse"
+import {Parse, Poll, Event} from "./parse_data"
 
 function slotNotInEvents(eventsList, slotFind){
     for (let ev of eventsList){
@@ -66,14 +66,16 @@ function CreatePoll(props){
 
     function submitPoll () {
 
-        let poll = new Poll(title);
-        poll.save().then(console.log);
-
-        events.map(console.log);
+        let poll = new Poll()
+        poll.save({title: title}).then(console.log).catch(console.error);
 
         events.map((ev) => {
-            let event = Event.fromCalendarEvent(ev, poll);
-            event.save().then(console.log);
+            let event = new Event();
+            event.save({
+                start: ev.start,
+                end: ev.end,
+                poll: poll
+            }).then(console.log).catch(console.error);
         })
         alert("created poll " + title + " with n events: " +events.length);
         // history.push('/');
