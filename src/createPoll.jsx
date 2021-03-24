@@ -3,12 +3,14 @@ import {useHistory} from "react-router-dom";
 import moment from "moment";
 import {Calendar, momentLocalizer} from "react-big-calendar";
 
-import {serializeEvents, serializeNewEvents} from "./utils"
 import {Button, TextField} from "@material-ui/core";
+import {Parse, Poll, Event} from "./parse_data"
+
+
 
 const localizer = momentLocalizer(moment)
 
-import {Parse, Poll, Event} from "./parse_data"
+
 
 function slotNotInEvents(eventsList, slotFind){
     for (let ev of eventsList){

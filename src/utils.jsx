@@ -2,9 +2,12 @@ import {Event, Parse, Poll} from "./parse_data";
 import {useEffect, useState} from "react";
 
 async function fetchEvents(pollId) {
-    let poll = await new Parse.Query(Poll).equalTo("id", pollId).find();
-    let events = await new Parse.Query(Event).equalTo("poll", poll).find();
-    return {poll: poll, events: events};
+    let pollQuery = new Parse.Query(Poll);
+    let polls = await  pollQuery.equalTo("objectId", pollId).find();
+    let poll = polls[0];
+    let eventsQuery = new Parse.Query(Event)
+    let events = await eventsQuery.equalTo("poll", poll).find();
+    return [poll, events];
 }
 
 function toCalEvents(events){
@@ -32,7 +35,7 @@ export function useEventListTitle(pollId){
     fetchData();
     }, [])
 
-    return {title:title, events:events}
+    return [title, events];
 }
 
 // functions to serialize to intenger instead of date object

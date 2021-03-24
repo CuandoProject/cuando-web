@@ -56,25 +56,25 @@ function VotePoll(props){
 
     function submitPoll(){
 
-        let eventsForSubmit = events.map((ev) => {
-            if (! ev.available) {ev.available = []}
-            if (ev.selected){
-                ev.available.push(userId) //WARNING Can have concurrency issues, if multiple clients are updating at the same time
-            }
-            return {
-                start: ev.start,
-                end: ev.end,
-                available: ev.available
-            };
-
-
-        })
-        let pollEventsRef = database.ref(`/polls/${pollId}/events`)
-
-        console.log(eventsForSubmit)
-        pollEventsRef.set(eventsForSubmit, (error) => {
-            error && console.log(error)
-        })
+        // let eventsForSubmit = events.map((ev) => {
+        //     if (! ev.available) {ev.available = []}
+        //     if (ev.selected){
+        //         ev.available.push(userId) //WARNING Can have concurrency issues, if multiple clients are updating at the same time
+        //     }
+        //     return {
+        //         start: ev.start,
+        //         end: ev.end,
+        //         available: ev.available
+        //     };
+        //
+        //
+        // })
+        // let pollEventsRef = database.ref(`/polls/${pollId}/events`)
+        //
+        // console.log(eventsForSubmit)
+        // pollEventsRef.set(eventsForSubmit, (error) => {
+        //     error && console.log(error)
+        // })
 
         alert("Your vote has been successfully submitted");
         history.push('/view/'+pollId)
@@ -82,14 +82,14 @@ function VotePoll(props){
     }
 
 
-    useEffect(() => {
-        let poll = database.ref('/polls/' + pollId)
-        poll.once('value').then((poll) => {
-            setTitle(poll.val().title);
-            let events = deserializeEvents(poll.val().events)
-            setEvents(events);
-        })
-    }, [])
+    // useEffect(() => {
+    //     let poll = database.ref('/polls/' + pollId)
+    //     poll.once('value').then((poll) => {
+    //         setTitle(poll.val().title);
+    //         let events = deserializeEvents(poll.val().events)
+    //         setEvents(events);
+    //     })
+    // }, [])
     return (
             <div className='demo-app-main'>
                 <div className='demo-app-sidebar'>

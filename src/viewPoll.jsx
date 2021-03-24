@@ -9,18 +9,15 @@ import {
 import {Button} from "@material-ui/core";
 
 import moment from "moment";
+import {Parse, Poll, Event} from "./parse_data";
+import {useEventListTitle} from "./utils";
+
 const localizer = momentLocalizer(moment);
 
-import {Parse, Poll, Event} from "./parse_data";
-
-import {useEventListTitle} from "./utils"
-
-function viewPoll(props){
+function ViewPoll(props){
 
     let {pollId} = useParams();
-    let res = useEventListTitle(pollId);
-    let events = res.events;
-    let title = res.title;
+    let [title, events] = useEventListTitle(pollId);
 
     let [message, setMessage] = useState('See where people have voted');
 
@@ -57,4 +54,4 @@ function viewEventProps(event) {
     }
 }
 
-export default viewPoll;
+export default ViewPoll;
