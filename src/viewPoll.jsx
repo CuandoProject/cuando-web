@@ -11,37 +11,19 @@ import {Button} from "@material-ui/core";
 import moment from "moment";
 const localizer = momentLocalizer(moment);
 
+import {Parse, Poll, Event} from "./parse_data";
 
+import {useEventListTitle} from "./utils"
 
 function viewPoll(props){
 
-    let [events, setEvents] = useState([])
-    let [title, setTitle] = useState("")
-    let [message, setMessage] = useState('See where people have voted')
     let {pollId} = useParams();
-    let history = useHistory();
+    let res = useEventListTitle(pollId);
+    let events = res.events;
+    let title = res.title;
 
-    useEffect(() => {
-        let poll = database.ref('/polls/' + pollId)
-        poll.once('value').then((poll) => {
-            setTitle(poll.val().title);
-            let events = poll.val().events.map((ev) => {
-                    let nAvailable = 0
-                    if (ev.available) {
-                        nAvailable = ev.available.length
-                    }
+    let [message, setMessage] = useState('See where people have voted');
 
-                    return {
-                        start: new Date(ev.start),
-                        end: new Date(ev.end),
-                        title: "Available: " + nAvailable,
-                        nAvailable: nAvailable,
-                    }
-                }
-            )
-            setEvents(events);
-        })
-    }, [])
     return (
         <div className='demo-app-main'>
             <div className='demo-app-sidebar'>

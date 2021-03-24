@@ -6,21 +6,18 @@ import {
     useParams
 } from "react-router-dom";
 
-import {deserializeEvents, serializeEvents} from "./utils";
+import {deserializeEvents, serializeEvents, toCalEvents, getEvents} from "./utils";
 import {Button} from "@material-ui/core";
 
 import moment from "moment";
 const localizer = momentLocalizer(moment);
 
 function updateEventSelection(ev){
-    if (!ev.selected ) {
-        ev.selected = true
-    }
-    else {
-        ev.selected = false
-    }
+    ev.selected = !ev.selected;
     return ev
 }
+
+
 function VotePoll(props){
 
     let [events, setEvents] = useState([])
@@ -29,8 +26,8 @@ function VotePoll(props){
     let {pollId} = useParams();
     let history = useHistory();
 
-    const notLoggedInMessage = <span style={{color: "red"}}>
-        You need to be logged in to submit your vote <NavLink to="/login"> Login </NavLink></span>
+    // const notLoggedInMessage = <span style={{color: "red"}}>
+    //     You need to be logged in to submit your vote <NavLink to="/login"> Login </NavLink></span>
 
     function onSelect(selection) {
         selection.slots.pop() // last slot in selection is not visually selected, so drop it
@@ -58,20 +55,15 @@ function VotePoll(props){
     }
 
     function submitPoll(){
-        let user = firebase.auth().currentUser
-        if (!user){
-            setMessage(notLoggedInMessage)
-            return;
-        }
-        let userId = user.uid
+
         let eventsForSubmit = events.map((ev) => {
             if (! ev.available) {ev.available = []}
             if (ev.selected){
                 ev.available.push(userId) //WARNING Can have concurrency issues, if multiple clients are updating at the same time
             }
             return {
-                start: ev.start.getTime(),
-                end: ev.end.getTime(),
+                start: ev.start,
+                end: ev.end,
                 available: ev.available
             };
 
@@ -88,6 +80,8 @@ function VotePoll(props){
         history.push('/view/'+pollId)
 
     }
+
+
     useEffect(() => {
         let poll = database.ref('/polls/' + pollId)
         poll.once('value').then((poll) => {
