@@ -10,9 +10,8 @@ import {BrowserRouter, Route, NavLink, Switch, Link, useHistory} from "react-rou
 import SignInScreen from "./account";
 import CreatePoll from "./createPoll";
 import VotePoll from "./votePoll";
-import ViewPoll from "./viewPoll"
-
-import {Parse, Poll, Event} from "./parse"
+import ViewPoll from "./viewPoll";
+import Home from "./home"
 
 const localizer = momentLocalizer(moment)
 
@@ -39,55 +38,15 @@ function App(props) {
                 </div>
             </header>
             <Switch>
-                <Route path="/create" render={(props) => {return <CreatePoll history={props.history} match={props.match}/>}} /> //can remove this quick hack
+                <Route path="/create" component={CreatePoll} />
                 <Route path="/vote/:pollId" component={VotePoll} />
                 <Route path="/view/:pollId" component={ViewPoll} />
                 <Route path="/login/:redirect?" component={SignInScreen}/>
-                <Route path="/" render={(props) => <Home history={props.history} match={props.match}/>} />
+                <Route path="/" component={<Home/>} />
                 <Route render={() => <h1>404: page not found</h1>} />
             </Switch>
         </BrowserRouter>
         )
 }
-
-function Home(props){
-
-    let [polls, setPolls] = useState([])
-
-    // useEffect(()=> {
-    //     database.ref('/polls').once('value').then((polls) => {
-    //         polls = polls.val()
-    //         let pollsList = []
-    //         for (const key in polls){
-    //             pollsList.push({key: key, title: polls[key].title})
-    //         }
-    //         setPolls(pollsList)
-    //     }, (error) => {
-    //         console.log(error)
-    //     })
-    // }, [])
-
-    return(
-        <div className='home'>
-            Select a poll
-            <ul>
-                {polls.map(poll =>
-                    <li key={poll.key}>{poll.title}&nbsp;
-                    <Link to={'/vote/' + poll.key}>Vote</Link>&nbsp;
-                    <Link to={'/view/' + poll.key}>View Results</Link></li>)}
-            </ul>
-        </div>)
-}
-// function eventNotPresent(eventStart, events){
-//     console.log(events)
-//     events.forEach(
-//         (ev) => {
-//             if (ev.start === eventStart) {
-//                 return false
-//             }}
-//     )
-//     return true
-// }
-
 
 export default App

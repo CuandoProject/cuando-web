@@ -12,9 +12,6 @@ import {Button} from "@material-ui/core";
 import moment from "moment";
 const localizer = momentLocalizer(moment);
 
-import firebase from "./firebase";
-let database =  firebase.database();
-
 function updateEventSelection(ev){
     if (!ev.selected ) {
         ev.selected = true
