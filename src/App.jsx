@@ -42,7 +42,7 @@ function App(props) {
                 <Route path="/vote/:pollId" component={VotePoll} />
                 <Route path="/view/:pollId" component={ViewPoll} />
                 <Route path="/login/:redirect?" component={SignInScreen}/>
-                <Route path="/" component={<Home/>} />
+                <Route path="/" component={Home}/>
                 <Route render={() => <h1>404: page not found</h1>} />
             </Switch>
         </BrowserRouter>
