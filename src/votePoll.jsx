@@ -6,10 +6,11 @@ import {
     useParams
 } from "react-router-dom";
 
-import {deserializeEvents, serializeEvents, toCalEvents, getEvents} from "./utils";
+import {toCalEvents, setEvents, useEventListTitle} from "./utils";
 import {Button} from "@material-ui/core";
 
 import moment from "moment";
+
 const localizer = momentLocalizer(moment);
 
 function updateEventSelection(ev){
@@ -20,11 +21,12 @@ function updateEventSelection(ev){
 
 function VotePoll(props){
 
-    let [events, setEvents] = useState([])
-    let [title, setTitle] = useState("")
+
     let [message, setMessage] = useState('')
     let {pollId} = useParams();
     let history = useHistory();
+
+    let {title, setTitle, events, setEvents} = useEventListTitle(pollId);
 
     // const notLoggedInMessage = <span style={{color: "red"}}>
     //     You need to be logged in to submit your vote <NavLink to="/login"> Login </NavLink></span>
@@ -56,40 +58,18 @@ function VotePoll(props){
 
     function submitPoll(){
 
-        // let eventsForSubmit = events.map((ev) => {
-        //     if (! ev.available) {ev.available = []}
-        //     if (ev.selected){
-        //         ev.available.push(userId) //WARNING Can have concurrency issues, if multiple clients are updating at the same time
-        //     }
-        //     return {
-        //         start: ev.start,
-        //         end: ev.end,
-        //         available: ev.available
-        //     };
-        //
-        //
-        // })
-        // let pollEventsRef = database.ref(`/polls/${pollId}/events`)
-        //
-        // console.log(eventsForSubmit)
-        // pollEventsRef.set(eventsForSubmit, (error) => {
-        //     error && console.log(error)
-        // })
+        events.map((ev) =>{
+            if (ev.selected){
+                ev.event.increment("nAvailable");
+                ev.event.save().catch(console.error);
+            }
+        })
 
         alert("Your vote has been successfully submitted");
         history.push('/view/'+pollId)
 
     }
 
-
-    // useEffect(() => {
-    //     let poll = database.ref('/polls/' + pollId)
-    //     poll.once('value').then((poll) => {
-    //         setTitle(poll.val().title);
-    //         let events = deserializeEvents(poll.val().events)
-    //         setEvents(events);
-    //     })
-    // }, [])
     return (
             <div className='demo-app-main'>
                 <div className='demo-app-sidebar'>

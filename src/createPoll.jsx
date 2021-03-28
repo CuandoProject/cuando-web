@@ -76,11 +76,12 @@ function CreatePoll(props){
             event.save({
                 start: ev.start,
                 end: ev.end,
-                poll: poll
+                poll: poll,
+                nAvailable: 0
             }).then(console.log).catch(console.error);
         })
         alert("created poll " + title + " with n events: " +events.length);
-        // history.push('/');
+        history.push('/');
 
     }
 

@@ -1,21 +1,23 @@
 import {Event, Parse, Poll} from "./parse_data";
 import {useEffect, useState} from "react";
 
-async function fetchEvents(pollId) {
-    let pollQuery = new Parse.Query(Poll);
-    let polls = await  pollQuery.equalTo("objectId", pollId).find();
-    let poll = polls[0];
-    let eventsQuery = new Parse.Query(Event)
-    let events = await eventsQuery.equalTo("poll", poll).find();
-    return [poll, events];
+async function fetchEvents(poll) {
+    let eventsQuery = new Parse.Query(Event);
+    return await eventsQuery.equalTo("poll", poll).find();
+}
+
+async function fetchPoll(pollId){
+    const pollQuery = new Parse.Query(Poll);
+    const polls = await pollQuery.equalTo("objectId", pollId).find();
+    return polls[0];
 }
 
 function toCalEvents(events){
     return events.map((ev) => {
-        let nAvailable = ev.get("available") | 0
+        let nAvailable = ev.get("nAvailable") | 0
         return {
-            start: ev.start,
-            end: ev.end,
+            start: ev.get("start"),
+            end: ev.get("end"),
             title: "Available: " + nAvailable,
             nAvailable: nAvailable,
             event: ev // Parse event used of update. Maybe need to use the id instead?
@@ -23,21 +25,58 @@ function toCalEvents(events){
     })
 }
 
+
 export function useEventListTitle(pollId){
-    let [events, setEvents] = useState([]);
     let [title, setTitle] = useState("");
+    let [events, setEvents] = useState([]);
     useEffect( () => { async function fetchData() {
-        const [poll, events] = await fetchEvents(pollId);
-        setTitle(poll.get("title"))
-        const calEvents = toCalEvents(events)
+        const poll = await fetchPoll(pollId);
+        if (!poll) {//poll does not exist
+            setTitle(null);
+            setEvents(null); // signal that there is no data. Think to use a proper nullable type here.
+            return;
+        }
+        const events = await fetchEvents(poll);
+        setTitle(poll.get("title"));
+        const calEvents = toCalEvents(events);
         setEvents(calEvents);
     }
     fetchData();
     }, [])
 
-    return [title, events];
+    return {title, setTitle, events, setEvents};
 }
-
+//
+// export usePoll(pollId){
+//     let [title, setTitle] = useState("");
+//     useEffect( () => { async function fetchData() {
+//         const poll = await fetchPoll(pollId);
+//         if (!poll) {//poll does not exist
+//             return
+//         }
+//         const events = await fetchEvents(poll);
+//         setTitle(poll.get("title"));
+//         const calEvents = toCalEvents(events);
+//         setEvents(calEvents);
+//     }
+//         fetchData();
+//     }, [])
+//
+//     return [title, events];
+// }
+//
+// export function useEventList(poll){
+//     let [events, setEvents] = useState([]);
+//     useEffect( () => { async function fetchData() {
+//         const events = await fetchEvents(poll);
+//         const calEvents = toCalEvents(events);
+//         setEvents(calEvents);
+//     }
+//     fetchData();
+//     }, [])
+//
+//     return [events,setEvents];
+// }
 // functions to serialize to intenger instead of date object
 export  function serializeNewEvents(events) {
     return events.map(

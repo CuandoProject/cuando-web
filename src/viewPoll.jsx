@@ -17,10 +17,14 @@ const localizer = momentLocalizer(moment);
 function ViewPoll(props){
 
     let {pollId} = useParams();
-    let [title, events] = useEventListTitle(pollId);
+
+    let {title, setTitle, events, setEvents} = useEventListTitle(pollId);
 
     let [message, setMessage] = useState('See where people have voted');
 
+    if (title == null){
+        return <div> Error 404 no poll found </div>
+    }
     return (
         <div className='demo-app-main'>
             <div className='demo-app-sidebar'>
