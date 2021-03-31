@@ -1,5 +1,7 @@
 import {Event, Parse, Poll} from "./parse_data";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
+import {Snackbar} from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 
 async function fetchEvents(poll) {
     let eventsQuery = new Parse.Query(Event);
@@ -25,6 +27,13 @@ function toCalEvents(events){
     })
 }
 
+export function WipAlert(props){
+    return(<Snackbar open={props.open} autoHideDuration={3000} onClose={() => props.setOpen(false)}>
+        <MuiAlert elevation={6} variant="filled" severity="warning">
+            The feature is not implemented yet!
+        </MuiAlert>
+    </Snackbar>)
+}
 
 export function useEventListTitle(pollId){
     let [title, setTitle] = useState("");

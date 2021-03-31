@@ -7,6 +7,10 @@ body > div { /* the react root */
   height: 100%;
 }
 
+.main-content{
+  margin: 20pt;
+}
+
 body{
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 }
@@ -117,5 +121,10 @@ b { /* used for event dates/times */
 .home{
   margin-top: 20px;
   margin-left: 30px;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
 }
 
