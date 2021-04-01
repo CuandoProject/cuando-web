@@ -27,6 +27,18 @@ function toCalEvents(events){
     })
 }
 
+export function getUserName(){
+    const user = Parse.User.current();
+    if (user){
+        return user.get("username")
+    }
+    else{
+        return "Anonymous"
+    }
+}
+
+
+
 export function WipAlert(props){
     return(<Snackbar open={props.open} autoHideDuration={3000} onClose={() => props.setOpen(false)}>
         <MuiAlert elevation={6} variant="filled" severity="warning">

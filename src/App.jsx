@@ -23,33 +23,36 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
-import SignInScreen from "./account";
+import {Login, Register} from "./account";
 import CreatePoll from "./createPoll";
 import VotePoll from "./votePoll";
 import ViewPoll from "./viewPoll";
 import Home from "./home"
 import {Button, ButtonBase, Card, CardActions, createMuiTheme, MuiThemeProvider, Snackbar} from "@material-ui/core";
-import {amber} from "@material-ui/core/colors";
+import {amber, orange} from "@material-ui/core/colors";
 import {Add, Delete} from "@material-ui/icons";
+import {Parse} from "./parse_data"
+
+import {getUserName} from "./utils";
 
 const localizer = momentLocalizer(moment)
 
 
-Array.prototype.uniqueEvents = function () {
-    var a = this.concat();
-    for (var i = 0; i < a.length; ++i) {
-        for (var j = i + 1; j < a.length; ++j) {
-            if (a[i].start.getTime() === a[j].start.getTime())
-                a.splice(j--, 1);
-        }
-    }
-
-    return a;
-};
+// Array.prototype.uniqueEvents = function () {
+//     var a = this.concat();
+//     for (var i = 0; i < a.length; ++i) {
+//         for (var j = i + 1; j < a.length; ++j) {
+//             if (a[i].start.getTime() === a[j].start.getTime())
+//                 a.splice(j--, 1);
+//         }
+//     }
+//
+//     return a;
+// };
 
 const theme = createMuiTheme({
     palette: {
-        primary: amber,
+        primary: orange,
     }
 })
 
@@ -134,6 +137,10 @@ function PrimarySearchAppBar() {
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
+    function logout (){
+        Parse.User.logOut()
+        handleMenuClose()
+    }
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -146,8 +153,9 @@ function PrimarySearchAppBar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={RouterLink} to="/login">Login</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={RouterLink} to="/register">Register</MenuItem>
+            <MenuItem onClick={logout} >Logout</MenuItem>
         </Menu>
     );
 
@@ -191,6 +199,11 @@ function PrimarySearchAppBar() {
                         </IconButton>
                     </div>
                     <div>
+                        <Typography>
+                            {getUserName()}
+                        </Typography>
+                    </div>
+                    <div>
                         <IconButton
                             edge="end"
                             aria-label="account of current user"
@@ -216,19 +229,13 @@ function App(props) {
         <BrowserRouter>
             <MuiThemeProvider theme={theme}>
                 <PrimarySearchAppBar/>
-                {/*<header className="header">*/}
-                {/*    <NavLink to="/">Home</NavLink>*/}
-                {/*    <div className='header-right'>*/}
-                {/*        <NavLink to="/create">Create Poll</NavLink>*/}
-                {/*        <NavLink to="/login">Account</NavLink>*/}
-                {/*    </div>*/}
-                {/*</header>*/}
                 <div className="main-content">
                     <Switch>
                         <Route path="/create" component={CreatePoll}/>
                         <Route path="/vote/:pollId" component={VotePoll}/>
                         <Route path="/view/:pollId" component={ViewPoll}/>
-                        <Route path="/login/:redirect?" component={SignInScreen}/>
+                        <Route path="/login/:redirect?" component={Login}/>
+                        <Route path="/register" component={Register}/>
                         <Route path="/" component={Home}/>
                         <Route render={() => <h1>404: page not found</h1>}/>
                     </Switch>
