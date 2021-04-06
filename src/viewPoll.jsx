@@ -9,7 +9,7 @@ import {
 import {Button} from "@material-ui/core";
 
 import moment from "moment";
-import {Parse, Poll, Event} from "./parse_data";
+import {Parse, Poll, Event} from "./data";
 import {useEventListTitle} from "./utils";
 
 const localizer = momentLocalizer(moment);

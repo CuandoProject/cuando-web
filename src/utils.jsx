@@ -1,7 +1,9 @@
-import {Event, Parse, Poll} from "./parse_data";
-import React, {useEffect, useState} from "react";
-import {Snackbar} from "@material-ui/core";
+import {Event, Parse, Poll, userContext} from "./data";
+import React, {useContext, useEffect, useState} from "react";
+import {Paper, Snackbar} from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
+import {v1 as uuid} from "uuid"
+
 
 async function fetchEvents(poll) {
     let eventsQuery = new Parse.Query(Event);
@@ -27,17 +29,33 @@ function toCalEvents(events){
     })
 }
 
-export function getUserName(){
-    const user = Parse.User.current();
-    if (user){
-        return user.get("username")
+export async function getUser(){
+    let user = Parse.User.current();
+    if (user === undefined){ // no users logged in so must be anonymous
+        let authData = {
+            "authData": {
+                "id": uuid()
+            }
+        };
+        user = new Parse.User();
+        user = user.linkWith("anonymous", authData)
+        user.set('name', "Anonymous User")
     }
-    else{
-        return "Anonymous"
-    }
+
+    return(user)
+
 }
 
-
+export function ShowUserName(props){
+    const {user, _} = useContext(userContext);
+    const userName = user ? user.get("name"): "None"
+    return(
+        <footer>
+            The current logged in user is:
+            {userName}
+        </footer>
+    )
+}
 
 export function WipAlert(props){
     return(<Snackbar open={props.open} autoHideDuration={3000} onClose={() => props.setOpen(false)}>

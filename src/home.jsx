@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import { Link as RouterLink } from 'react-router-dom';
-import {Parse, Poll} from "./parse_data";
+import {Parse, Poll} from "./data";
 import {Button, Card, CardActions, CardContent, Grid, Snackbar, Typography} from "@material-ui/core";
 import * as PropTypes from "prop-types";
 import IconButton from "@material-ui/core/IconButton";

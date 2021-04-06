@@ -30,25 +30,13 @@ import ViewPoll from "./viewPoll";
 import Home from "./home"
 import {Button, ButtonBase, Card, CardActions, createMuiTheme, MuiThemeProvider, Snackbar} from "@material-ui/core";
 import {amber, orange} from "@material-ui/core/colors";
-import {Add, Delete} from "@material-ui/icons";
-import {Parse} from "./parse_data"
+import {Add, Delete, Refresh} from "@material-ui/icons";
+import {Parse, userContext} from "./data"
 
-import {getUserName} from "./utils";
+import {getUser, getUserName, ShowUserName} from "./utils";
 
 const localizer = momentLocalizer(moment)
 
-
-// Array.prototype.uniqueEvents = function () {
-//     var a = this.concat();
-//     for (var i = 0; i < a.length; ++i) {
-//         for (var j = i + 1; j < a.length; ++j) {
-//             if (a[i].start.getTime() === a[j].start.getTime())
-//                 a.splice(j--, 1);
-//         }
-//     }
-//
-//     return a;
-// };
 
 const theme = createMuiTheme({
     palette: {
@@ -128,6 +116,10 @@ function PrimarySearchAppBar() {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
 
+    const {user, setUser} = useContext(userContext);
+    const userName = user ? user.get("name"): "None"
+    console.log(userName)
+
     const isMenuOpen = Boolean(anchorEl);
 
     const handleProfileMenuOpen = (event) => {
@@ -141,6 +133,11 @@ function PrimarySearchAppBar() {
         Parse.User.logOut()
         handleMenuClose()
     }
+
+    const refreshUser =  async () => {
+        const user = await getUser();
+        console.log("got user: ", user)
+        setUser(user)}
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -185,6 +182,7 @@ function PrimarySearchAppBar() {
                         />
                     </div>
                     <div className={classes.grow}/>
+
                     <div>
                         <IconButton
                             edge="end"
@@ -199,9 +197,11 @@ function PrimarySearchAppBar() {
                         </IconButton>
                     </div>
                     <div>
-                        <Typography>
-                            {getUserName()}
-                        </Typography>
+                        <IconButton
+                            onClick={refreshUser}
+                        >
+                            <Refresh/>
+                        </IconButton>
                     </div>
                     <div>
                         <IconButton
@@ -223,23 +223,37 @@ function PrimarySearchAppBar() {
 }
 
 
+
 function App(props) {
     const [wip, setWip] = useState(false);
-    return (
+    const [user, setUser] = useState()
+    useEffect(() => {
+        async function updateUser() {
+            const user = await getUser()
+            setUser(user)
+        }
+        updateUser();
+    }, [])
+
+    return(
         <BrowserRouter>
             <MuiThemeProvider theme={theme}>
-                <PrimarySearchAppBar/>
-                <div className="main-content">
-                    <Switch>
-                        <Route path="/create" component={CreatePoll}/>
-                        <Route path="/vote/:pollId" component={VotePoll}/>
-                        <Route path="/view/:pollId" component={ViewPoll}/>
-                        <Route path="/login/:redirect?" component={Login}/>
-                        <Route path="/register" component={Register}/>
-                        <Route path="/" component={Home}/>
-                        <Route render={() => <h1>404: page not found</h1>}/>
-                    </Switch>
-                </div>
+                <userContext.Provider value={{user, setUser}} >
+                    <PrimarySearchAppBar/>
+                    <div className="main-content">
+                        <Switch>
+                            <Route path="/create" component={CreatePoll}/>
+                            <Route path="/vote/:pollId" component={VotePoll}/>
+                            <Route path="/view/:pollId" component={ViewPoll}/>
+                            <Route path="/login/:redirect?" component={Login}/>
+                            <Route path="/register" component={Register}/>
+                            <Route path="/" component={Home}/>
+                            <Route render={() => <h1>404: page not found</h1>}/>
+                        </Switch>
+                    </div>
+                    <ShowUserName />
+
+                </userContext.Provider>
             </MuiThemeProvider>
         </BrowserRouter>
     )

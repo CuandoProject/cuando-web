@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import moment from "moment";
 import {Calendar, momentLocalizer} from "react-big-calendar";
 
 import {Button, TextField} from "@material-ui/core";
-import {Parse, Poll, Event} from "./parse_data"
+import {Parse, Poll, Event, userContext} from "./data"
 
 
 
@@ -35,6 +35,7 @@ function CreatePoll(props){
     let [eventDuration, setEventDuration] = useState(60) //duration is expressed in minutes
     let [title, setTitle] = useState("Untitled Poll") // can find a cooler default name here
     let history = useHistory()
+    const {user, _} = useContext(userContext)
 
     function slotsToEvents(slots){
         return slots.map((slot) => {
@@ -69,7 +70,10 @@ function CreatePoll(props){
     function submitPoll () {
 
         let poll = new Poll()
-        poll.save({title: title}).then(console.log).catch(console.error);
+        poll.save({
+            title: title,
+            owner: user,
+        }).then(console.log).catch(console.error);
 
         events.map((ev) => {
             let event = new Event();

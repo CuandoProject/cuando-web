@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {useHistory, useParams} from 'react-router-dom'
 import {Button, makeStyles, TextField, Typography} from "@material-ui/core";
 import {Link as RouterLink} from "react-router-dom"
-import {Parse} from "./parse_data"
+import {Parse, userContext} from "./data"
 
 const useFormStyles = makeStyles((theme) => ({
     root: {
@@ -13,6 +13,7 @@ const useFormStyles = makeStyles((theme) => ({
     },
 }));
 
+// Taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
 function validateEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
@@ -23,6 +24,8 @@ export function Login(props){
     const [passwdError, setPasswdError] = useState(false)
     const [email, setEmail] = useState("")
     const [passwd, setPasswd] = useState("")
+
+    const {user, setUser} = useContext(userContext);
 
     const history = useHistory();
 
@@ -38,6 +41,7 @@ export function Login(props){
     async function handleLogin(value) {
         const user = await Parse.User.logIn(email, passwd);
         console.log(user)
+        setUser(user);
         history.push("/")
     }
 
@@ -102,7 +106,6 @@ export function Register(props){
     const classes = useFormStyles();
 
     function handleRegister(value){
-        console.log("Ciaooo")
         const user = new Parse.User();
         user.set("username", email);
         user.set("password", passwd);
