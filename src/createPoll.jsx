@@ -69,24 +69,32 @@ function CreatePoll(props){
 
     function submitPoll () {
 
-        let poll = new Poll()
-        poll.save({
-            title: title,
-            owner: user,
-        }).then(console.log).catch(console.error);
+        try {
+            let poll = new Poll()
+            poll.save({
+                title: title,
+                permission: user,
+            }).then((poll) => {
+                user.addUnique("ownedPolls", poll.id);
+                user.save();
+            })
 
-        events.map((ev) => {
-            let event = new Event();
-            event.save({
-                start: ev.start,
-                end: ev.end,
-                poll: poll,
-                nAvailable: 0
-            }).then(console.log).catch(console.error);
-        })
-        alert("created poll " + title + " with n events: " +events.length);
-        history.push('/');
+            events.map((ev) => {
+                let event = new Event();
+                event.save({
+                    start: ev.start,
+                    end: ev.end,
+                    poll: poll,
+                    nAvailable: 0
+                }).then(console.log).catch(console.error);
+            })
 
+            // Convert this to an nice notification message
+            // alert("created poll " + title + " with n events: " +events.length);
+            history.push('/');
+        } catch (err) {
+            console.error(err)
+        }
     }
 
 
@@ -139,7 +147,7 @@ function CreatePollTopBar(props){
                 <TextField label="Poll Title" onChange={props.changeTitle} placeholder={props.title}/>
             </div>
             <div className='demo-app-sidebar-section'>
-                <Button onClick={props.onSubmitPoll} variant="contained" color="primary" > Create form </Button>
+                <Button onClick={props.onSubmitPoll} variant="contained" color="primary" > Create Poll </Button>
             </div>
         </div>
     )
