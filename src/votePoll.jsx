@@ -1,15 +1,13 @@
-import React, {useEffect, useState} from "react";
+import {useState} from "react";
 import {Calendar, momentLocalizer} from "react-big-calendar";
-import {
-    NavLink,
-    useHistory,
-    useParams
-} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 
-import {toCalEvents, setEvents, useEventListTitle} from "./utils";
 import {Button} from "@material-ui/core";
 
 import moment from "moment";
+
+import {toCalEvents, useEventListTitle} from "./utils";
+
 
 const localizer = momentLocalizer(moment);
 
@@ -19,9 +17,7 @@ function updateEventSelection(ev){
 }
 
 
-function VotePoll(props){
-
-
+function VotePoll(){
     let [message, setMessage] = useState('')
     let {pollId} = useParams();
     let history = useHistory();

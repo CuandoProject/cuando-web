@@ -1,5 +1,5 @@
 import {Event, Parse, Poll, userContext} from "./data";
-import React, {useContext, useEffect, useState} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import {Paper, Snackbar} from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 import {v1 as uuid} from "uuid"
@@ -57,6 +57,8 @@ export function ShowUserName(props){
     )
 }
 
+export const alertContext = createContext(function (){})
+
 export function WipAlert(props){
     return(<Snackbar open={props.open} autoHideDuration={3000} onClose={() => props.setOpen(false)}>
         <MuiAlert elevation={6} variant="filled" severity="warning">
@@ -72,7 +74,7 @@ export function useEventListTitle(pollId){
         const poll = await fetchPoll(pollId);
         if (!poll) {//poll does not exist
             setTitle(null);
-            setEvents(null); // signal that there is no data. Think to use a proper nullable type here.
+            setEvents(null); // signal that there is no data. consider to use a proper nullable type here.
             return;
         }
         const events = await fetchEvents(poll);
@@ -85,62 +87,7 @@ export function useEventListTitle(pollId){
 
     return {title, setTitle, events, setEvents};
 }
-//
-// export usePoll(pollId){
-//     let [title, setTitle] = useState("");
-//     useEffect( () => { async function fetchData() {
-//         const poll = await fetchPoll(pollId);
-//         if (!poll) {//poll does not exist
-//             return
-//         }
-//         const events = await fetchEvents(poll);
-//         setTitle(poll.get("title"));
-//         const calEvents = toCalEvents(events);
-//         setEvents(calEvents);
-//     }
-//         fetchData();
-//     }, [])
-//
-//     return [title, events];
-// }
-//
-// export function useEventList(poll){
-//     let [events, setEvents] = useState([]);
-//     useEffect( () => { async function fetchData() {
-//         const events = await fetchEvents(poll);
-//         const calEvents = toCalEvents(events);
-//         setEvents(calEvents);
-//     }
-//     fetchData();
-//     }, [])
-//
-//     return [events,setEvents];
-// }
-// functions to serialize to intenger instead of date object
-export  function serializeNewEvents(events) {
-    return events.map(
-        (ev) => {
-            return {
-                start: ev.start.getTime(),
-                end: ev.end.getTime(),
-                available: [] //initalize to empty
-            }
-        }
-    )
-}
 
-export  function serializeSelectableEvents(events) {
-    return events.map(
-        (ev) => {
-            return {
-                start: ev.start.getTime(),
-                end: ev.end.getTime(),
-                available: ev.available,
-                selected: ev.selected,
-            }
-        }
-    )
-}
 
 export function deserializeEvents(events) {
     return events.map(

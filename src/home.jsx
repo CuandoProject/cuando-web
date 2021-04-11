@@ -1,16 +1,16 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Link as RouterLink} from 'react-router-dom';
 import {Parse, Poll, userContext} from "./data";
-import {Button, Card, CardActions, CardContent, Grid, Typography} from "@material-ui/core";
+import {Button, Card, CardActions, CardContent, Grid, Tooltip, Typography} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import {Delete} from "@material-ui/icons";
+import {Delete, Link} from "@material-ui/icons";
 
 
-import {WipAlert} from "./utils";
+import {alertContext} from "./utils";
 
 function PollCard(props){
 
-    const [wip, setWip] = useState(false)
+    const setWip = useContext(alertContext)
 
     return(
         <Card>
@@ -20,18 +20,25 @@ function PollCard(props){
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button component={RouterLink} to={'/vote/' + props.pollId}>
-                    Vote
-                </Button>
-                <Button component={RouterLink} to={'/view/' + props.pollId}>
-                    View
-                </Button>
-                <IconButton edge="end" onClick={() => setWip(true)}>
-                    <Delete/>
-                </IconButton>
+                <Tooltip title="View poll results" placement="bottom">
+                    <Button component={RouterLink} to={'/view/' + props.pollId}>
+                        View
+                    </Button>
+                </Tooltip>
 
+                <Tooltip title="Copy link to clipboard" placement="bottom" >
+                    <IconButton onClick={() =>
+                        navigator.clipboard.writeText("https://cuando.mone27.net/vote/" + props.pollId)}>
+                        <Link />
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Delete Poll" placement="bottom">
+                    <IconButton edge="end" onClick={() => setWip(true)}>
+                        <Delete/>
+                    </IconButton>
+                </Tooltip>
             </CardActions>
-            <WipAlert open={wip} setOpen={setWip}/>
         </Card>
     )
 }

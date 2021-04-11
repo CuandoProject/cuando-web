@@ -1,15 +1,13 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {useHistory} from "react-router-dom";
 import moment from "moment";
 import {Calendar, momentLocalizer} from "react-big-calendar";
 
 import {Button, TextField} from "@material-ui/core";
-import {Parse, Poll, Event, userContext} from "./data"
-
+import {Poll, Event, userContext} from "./data"
 
 
 const localizer = momentLocalizer(moment)
-
 
 
 function slotNotInEvents(eventsList, slotFind){
@@ -30,7 +28,7 @@ function eventNotInSlots(slotsList, eventFind){
     return true;
 }
 
-function CreatePoll(props){
+function CreatePoll(){
     let [events, setEvents] = useState([])
     let [eventDuration, setEventDuration] = useState(60) //duration is expressed in minutes
     let [title, setTitle] = useState("Untitled Poll") // can find a cooler default name here
