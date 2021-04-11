@@ -47,18 +47,21 @@ function Home(props){
 
     useEffect(() => {
         if (!user) return; // stop running if the user is not available yet
-        ( async function getPolls() {try{
-            const ownedPolls = user.get("ownedPolls")
-            const pollsList = await Promise.all(ownedPolls.map(async (pollId) => {
-                // This needs to be redifined for each query otherwise it doesn't change on new get calls
-                const pollQuery = new Parse.Query(Poll)
-                const title = (await pollQuery.get(pollId)).get("title")
-                return {id: pollId, title: title};
-            }))
-            setPolls(pollsList)
+        try{
+            const pollsList = []
+            const pollQuery = new Parse.Query(Poll)
+                .equalTo("owner", user)
+                .ascending("updatedAt");
+            pollQuery.find().then( (res) =>{
+                for (let i = 0; i < res.length; i++){
+                    const poll = res[i];
+                    pollsList.push({id: poll.id, title: poll.get("title")})
+                }
+                setPolls(pollsList);
+            })
         }
         catch (err) {console.error(err)}
-    }) () }, [user])
+    }, [user])
     return(
         <Grid container spacing={2}>
             {polls.map(poll =>

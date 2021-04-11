@@ -70,13 +70,12 @@ function CreatePoll(props){
     function submitPoll () {
 
         try {
+            // Should check at this point that user is not undefined
+
             let poll = new Poll()
             poll.save({
                 title: title,
-                permission: user,
-            }).then((poll) => {
-                user.addUnique("ownedPolls", poll.id);
-                user.save();
+                owner: user,
             })
 
             events.map((ev) => {
@@ -86,7 +85,7 @@ function CreatePoll(props){
                     end: ev.end,
                     poll: poll,
                     nAvailable: 0
-                }).then(console.log).catch(console.error);
+                })
             })
 
             // Convert this to an nice notification message
